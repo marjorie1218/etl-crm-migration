@@ -18,13 +18,20 @@ def clean_phones(df):
     df["phone"] = df["phone"].apply(format_phone)
     return df
 
+def clean_dates(df):
+    df["signup_date"] = pd.to_datetime(df["signup_date"], format="mixed")
+    df["signup_date"] = df["signup_date"].dt.strftime("%Y-%m-%d")
+    return df
+
 def transform():
     df = extract()
     df = clean_names(df)
     df = clean_phones(df)
+    df = clean_dates(df)
 
     print(f"Names cleaned. Example:\n{df['name'].head(5)}")
     print(f"\nPhones cleaned. Example:\n{df['phone'].head(5)}")
+    print(f"\nDates cleaned. Example:\n{df['signup_date'].head(5)}")
 
     return df
 
