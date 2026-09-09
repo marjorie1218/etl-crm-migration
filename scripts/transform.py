@@ -23,15 +23,29 @@ def clean_dates(df):
     df["signup_date"] = df["signup_date"].dt.strftime("%Y-%m-%d")
     return df
 
+def clean_duplicates(df):
+    has_email = df["email"].notna()
+    is_duplicate_email = df["email"].duplicated(keep="first")
+
+    rows_to_drop = has_email & is_duplicate_email
+    num_duplicates = rows_to_drop.sum()
+
+    df = df[~rows_to_drop]
+
+    print(f"Removed {num_duplicates} duplicate rows")
+    return df
+
 def transform():
     df = extract()
     df = clean_names(df)
     df = clean_phones(df)
     df = clean_dates(df)
+    df = clean_duplicates(df)
 
     print(f"Names cleaned. Example:\n{df['name'].head(5)}")
     print(f"\nPhones cleaned. Example:\n{df['phone'].head(5)}")
     print(f"\nDates cleaned. Example:\n{df['signup_date'].head(5)}")
+    print(f"\nFinal row count: {len(df)}")
 
     return df
 
